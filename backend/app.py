@@ -1,9 +1,13 @@
+import json
 import os
 from decimal import Decimal
 
 import mysql.connector
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
+from fastapi.encoders import jsonable_encoder
 from mysql.connector import Error, IntegrityError
+from redis import Redis
+from redis.exceptions import RedisError
 from pydantic import BaseModel, Field
 
 app = FastAPI()
@@ -12,6 +16,19 @@ DB_HOST = os.environ["DB_HOST"]
 DB_NAME = os.environ["DB_NAME"]
 DB_USER = os.environ["DB_USER"]
 DB_PASSWORD = os.environ["DB_PASSWORD"]
+REDIS_HOST = os.environ.get("REDIS_HOST", "redis")
+REDIS_PORT = int(os.environ.get("REDIS_PORT", "6379"))
+MENU_CACHE_KEY = "oliva:menu:v1"
+MENU_CACHE_TTL_SECONDS = 30
+redis_client = Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=True)
+
+
+def invalidate_menu_cache():
+    try:
+        redis_client.delete(MENU_CACHE_KEY)
+    except RedisError:
+        # Redis is an optimization; database writes should still succeed without it.
+        pass
 
 
 def get_connection():
@@ -70,7 +87,15 @@ def health():
 
 
 @app.get("/api/menu")
-def get_menu():
+def get_menu(response: Response):
+    try:
+        cached_menu = redis_client.get(MENU_CACHE_KEY)
+        if cached_menu is not None:
+            response.headers["X-Cache"] = "HIT"
+            return json.loads(cached_menu)
+    except (RedisError, json.JSONDecodeError):
+        pass
+
     connection = None
     cursor = None
     try:
@@ -79,7 +104,17 @@ def get_menu():
         cursor.execute(
             "SELECT id, title, price, stock_quantity FROM MenuItems ORDER BY id"
         )
-        return cursor.fetchall()
+        menu = cursor.fetchall()
+        try:
+            redis_client.setex(
+                MENU_CACHE_KEY,
+                MENU_CACHE_TTL_SECONDS,
+                json.dumps(jsonable_encoder(menu)),
+            )
+        except RedisError:
+            pass
+        response.headers["X-Cache"] = "MISS"
+        return menu
     except Error:
         raise database_error()
     finally:
@@ -98,6 +133,7 @@ def add_menu_item(item: MenuItemCreate):
             (item.title.strip(), item.price, item.stock_quantity),
         )
         connection.commit()
+        invalidate_menu_cache()
         item_id = cursor.lastrowid
         return {
             "id": item_id,
@@ -124,6 +160,7 @@ def delete_menu_item(item_id: int):
         if cursor.rowcount == 0:
             raise HTTPException(status_code=404, detail="Menu item not found.")
         connection.commit()
+        invalidate_menu_cache()
         return {"message": "Menu item deleted."}
     except HTTPException:
         if connection is not None:
@@ -247,6 +284,7 @@ def place_order(order: OrderCreate):
         )
         order_id = cursor.lastrowid
         connection.commit()
+        invalidate_menu_cache()
         return {"id": order_id, "status": "pending"}
     except HTTPException:
         if connection is not None:
@@ -301,6 +339,7 @@ def cancel_order(order_id: int):
             (order_id,),
         )
         connection.commit()
+        invalidate_menu_cache()
         return {"id": order_id, "status": "cancelled", "message": "Order cancelled and stock restored."}
     except HTTPException:
         if connection is not None:
