@@ -80,6 +80,7 @@ services:
       db:
         condition: service_healthy
     networks:
+      - adminer-access-network
       - database-network
     restart: unless-stopped
 
@@ -89,6 +90,9 @@ networks:
   database-network:
     driver: bridge
     internal: true
+  # Adminer needs a host-reachable network for its localhost-only port mapping.
+  adminer-access-network:
+    driver: bridge
 
 volumes:
   mysql-data:
