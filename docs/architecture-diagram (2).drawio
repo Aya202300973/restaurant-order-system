@@ -1,0 +1,58 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Architecture" id="arch2">
+    <mxGraphModel dx="1000" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="650" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="net1" value="backend-network" style="rounded=1;dashed=1;fillColor=#dae8fc;strokeColor=#6c8ebf;opacity=60;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="100" width="470" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="net2" value="database-network (internal)" style="rounded=1;dashed=1;fillColor=#d5e8d4;strokeColor=#82b366;opacity=60;verticalAlign=top;align=right;spacingRight=10;spacingTop=4;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="570" y="100" width="480" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="browser" value="Browser" style="rounded=1;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="180" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="frontend" value="frontend&lt;br&gt;Nginx :80" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;html=1;" vertex="1" parent="1">
+          <mxGeometry x="330" y="180" width="140" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="backend" value="backend&lt;br&gt;FastAPI :5000" style="rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;html=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="180" width="140" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="db" value="db&lt;br&gt;MySQL 8.4 :3306" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;html=1;" vertex="1" parent="1">
+          <mxGeometry x="880" y="180" width="140" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="redis" value="redis&lt;br&gt;Redis 7 :6379" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;html=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="310" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="adminer" value="adminer :8080&lt;br&gt;host 127.0.0.1:8081" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;html=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="790" y="310" width="130" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="vol" value="volume: mysql-data" style="shape=cylinder3;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="880" y="460" width="140" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="FRONTEND_PORT → 80" style="endArrow=classic;html=1;fontSize=11;labelBackgroundColor=#ffffff;verticalAlign=bottom;" edge="1" parent="1" source="browser" target="frontend">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="/api/ → :5000" style="endArrow=classic;html=1;fontSize=11;labelBackgroundColor=#ffffff;verticalAlign=bottom;" edge="1" parent="1" source="frontend" target="backend">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="SQL queries" style="endArrow=classic;html=1;fontSize=11;labelBackgroundColor=#ffffff;verticalAlign=bottom;" edge="1" parent="1" source="backend" target="db">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="menu cache (30 s)" style="endArrow=classic;html=1;fontSize=11;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="backend" target="redis">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="admin SQL" style="endArrow=classic;html=1;fontSize=11;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="adminer" target="db">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="/var/lib/mysql" style="endArrow=none;html=1;dashed=1;fontSize=11;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="db" target="vol">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="note" value="Published ports: frontend (FRONTEND_PORT) for everyone, adminer on 127.0.0.1 only. Backend (5000), Redis (6379) and MySQL (3306) are not exposed to the host." style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="440" width="560" height="50" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
