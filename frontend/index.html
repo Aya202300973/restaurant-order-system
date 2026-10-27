@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#F7F1E8" />
+  <meta name="description" content="OLIVA Italian Kitchen. Browse our menu and place an order." />
+  <title>OLIVA — Italian Kitchen</title>
+  <link rel="icon" href="/assets/oliva-mark.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+  <script defer src="/api.js"></script>
+  <script defer src="/script.js"></script>
+</head>
+<body data-page="menu">
+  <div id="demo-banner" class="demo-banner" hidden>Preview mode · sample data only</div>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="OLIVA Italian Kitchen home">
+      <img src="/assets/oliva-mark.svg" alt="" width="38" height="38" />
+      <span class="brand-copy"><strong>OLIVA</strong><small>ITALIAN KITCHEN</small></span>
+    </a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a class="nav-link" href="#menu">Menu</a>
+      <button id="cart-toggle" class="cart-toggle" type="button" aria-haspopup="dialog" aria-controls="cart-drawer" aria-label="Open your order">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.1 10.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 1.9-1.4L21 8H6.1M10 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm7 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/></svg>
+        <span class="cart-label">Your Order</span><span id="cart-count" class="cart-count">0</span>
+      </button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="intro section-wrap">
+      <div>
+        <p class="eyebrow">OLIVA · ITALIAN KITCHEN</p>
+        <h1>Italian favourites,<br /><span>served fresh.</span></h1>
+      </div>
+      <p class="intro-copy">A menu of classic pizzas, pastas, and treats.<br class="desktop-break" /> Choose a dish to get started.</p>
+    </section>
+
+    <section id="menu" class="menu-section section-wrap" aria-labelledby="menu-title">
+      <div class="menu-heading">
+        <div><p class="eyebrow">Made in our kitchen</p><h2 id="menu-title">Our Menu</h2></div>
+        <p id="menu-note" class="menu-note" role="status" aria-live="polite">Loading menu…</p>
+      </div>
+      <div id="menu-grid" class="menu-grid" aria-live="polite"></div>
+      <div id="menu-empty" class="empty-state" hidden>
+        <h3>No dishes available right now.</h3><p>Please check back soon.</p>
+      </div>
+      <div id="menu-error" class="notice error" role="alert" hidden></div>
+      <p id="cart-feedback" class="cart-feedback" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="section-wrap footer-inner">
+      <a class="brand footer-brand" href="/"><img src="/assets/oliva-mark-light.svg" alt="" width="34" height="34" /><span class="brand-copy"><strong>OLIVA</strong><small>ITALIAN KITCHEN</small></span></a>
+      <span class="footer-copy">OLIVA Italian Kitchen</span>
+      <a class="admin-link" href="/manage.html">Menu Management</a>
+    </div>
+  </footer>
+
+  <div id="drawer-backdrop" class="drawer-backdrop" hidden></div>
+  <aside id="cart-drawer" class="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-title" aria-hidden="true" hidden>
+    <div class="drawer-header"><div><p class="eyebrow">OLIVA · ITALIAN KITCHEN</p><h2 id="cart-title">Your Order</h2></div><button id="cart-close" class="icon-button" type="button" aria-label="Close your order">×</button></div>
+    <div class="drawer-content">
+      <div id="cart-empty" class="drawer-empty"><span class="empty-plate" aria-hidden="true">○</span><p>Your order is empty.</p><small>Choose one dish from Our Menu to get started.</small><button id="browse-menu" class="text-button" type="button">Browse menu</button></div>
+      <div id="cart-item" class="cart-item" hidden>
+        <img id="cart-image" src="/assets/food-fallback.svg" alt="" />
+        <div class="cart-item-main"><div class="cart-item-head"><div><h3 id="cart-item-title"></h3><p id="cart-item-price" class="cart-item-price"></p></div><button id="cart-remove" class="remove-button" type="button">Remove</button></div>
+          <div class="cart-item-bottom"><div class="quantity-control"><button type="button" data-cart-step="-1" aria-label="Decrease order quantity">−</button><input id="cart-quantity" type="number" min="1" value="1" step="1" inputmode="numeric" aria-label="Order quantity" /><button type="button" data-cart-step="1" aria-label="Increase order quantity">+</button></div><span id="cart-stock" class="cart-stock"></span></div>
+        </div>
+      </div>
+      <div id="cart-summary" class="cart-summary" hidden><div class="summary-line"><span>Total</span><strong id="cart-total">EGP 0.00</strong></div><button id="checkout-button" class="button button-primary button-wide" type="button">Checkout <span aria-hidden="true">→</span></button></div>
+      <section id="checkout-panel" class="checkout-panel" hidden aria-labelledby="customer-title">
+        <div class="checkout-heading"><p class="eyebrow">Checkout</p><h3 id="customer-title">Customer Details</h3></div>
+        <label class="field-label" for="customer-select">Choose an existing customer</label>
+        <select id="customer-select" class="form-control"><option value="">Loading customers…</option></select>
+        <details id="register-details" class="register-details"><summary>Register a new customer <span aria-hidden="true">＋</span></summary>
+          <form id="customer-form" class="stack-form">
+            <label class="field-label" for="customer-name">Name</label><input id="customer-name" class="form-control" name="name" autocomplete="name" required maxlength="120" placeholder="Your name" />
+            <label class="field-label" for="customer-email">Email</label><input id="customer-email" class="form-control" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com" />
+            <button class="button button-secondary" type="submit">Register customer</button>
+          </form>
+        </details>
+        <p id="checkout-feedback" class="form-feedback" role="status" aria-live="polite"></p>
+        <button id="place-order" class="button button-primary button-wide" type="button" disabled>Place Order <span aria-hidden="true">→</span></button>
+        <div id="order-result" class="order-result" hidden role="status" aria-live="polite"></div>
+      </section>
+      <section class="order-history" aria-labelledby="orders-title">
+        <div class="order-history-heading"><div><p class="eyebrow">Track your orders</p><h3 id="orders-title">Order Status</h3></div><button id="refresh-orders" class="text-button" type="button">Refresh</button></div>
+        <p id="orders-note" class="orders-note" role="status" aria-live="polite">Loading orders…</p>
+        <div id="orders-list" class="orders-list"></div>
+      </section>
+    </div>
+  </aside>
+</body>
+</html>

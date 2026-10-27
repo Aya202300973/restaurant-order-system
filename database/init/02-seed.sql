@@ -11,9 +11,9 @@ INSERT INTO MenuItems (id, title, price, stock_quantity) VALUES
     (1, 'Cheese Pizza', 12.50, 18),
     (2, 'Creamy Pasta', 14.00, 14),
     (3, 'Lasagna', 16.50, 12),
-    (4, 'Mushroom Rice', 15.00, 10),
+    (4, 'Mushroom Risotto', 15.00, 10),
     (5, 'Tiramisu', 7.00, 20),
-    (6, 'Vanilla Pudding', 6.50, 0);
+    (6, 'Panna Cotta', 6.50, 0);
 
 INSERT INTO Orders
     (id, customer_id, menu_item_id, quantity, status)

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#F7F1E8" />
+  <meta name="description" content="OLIVA Italian Kitchen menu management demonstration." />
+  <title>Menu Management — OLIVA Italian Kitchen</title>
+  <link rel="icon" href="/assets/oliva-mark.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+  <script defer src="/api.js"></script>
+  <script defer src="/manage.js"></script>
+</head>
+<body data-page="manage">
+  <div id="demo-banner" class="demo-banner" hidden>Preview mode · sample data only</div>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="OLIVA Italian Kitchen home"><img src="/assets/oliva-mark.svg" alt="" width="38" height="38" /><span class="brand-copy"><strong>OLIVA</strong><small>ITALIAN KITCHEN</small></span></a>
+    <a class="back-link" href="/">← Back to Menu</a>
+  </header>
+  <main class="manage-main section-wrap">
+    <div class="manage-heading"><div><p class="eyebrow">Classroom demonstration · no sign-in</p><h1>Menu Management</h1><p>Add or remove menu items using the menu API.</p></div></div>
+    <div class="manage-grid">
+      <section class="manage-card" aria-labelledby="add-title">
+        <p class="eyebrow">Menu items</p><h2 id="add-title">Add a dish</h2>
+        <form id="menu-form" class="stack-form">
+          <label class="field-label" for="item-title">Dish name</label><input id="item-title" class="form-control" name="title" required minlength="2" maxlength="120" placeholder="e.g. Margherita Pizza" />
+          <div class="form-row"><div><label class="field-label" for="item-price">Price (EGP)</label><input id="item-price" class="form-control" name="price" type="number" min="0.01" step="0.01" required placeholder="180.00" /></div><div><label class="field-label" for="item-stock">Stock quantity</label><input id="item-stock" class="form-control" name="stock_quantity" type="number" min="0" step="1" required placeholder="10" /></div></div>
+          <button class="button button-primary" type="submit">Add to Menu <span aria-hidden="true">+</span></button>
+        </form>
+        <p id="manage-feedback" class="form-feedback" role="status" aria-live="polite"></p>
+      </section>
+      <section class="manage-card" aria-labelledby="remove-title">
+        <p class="eyebrow">Menu items</p><h2 id="remove-title">Remove a dish</h2>
+        <p class="manage-help">Choose a menu item to remove it from the current menu.</p>
+        <label class="field-label" for="delete-item-select">Dish</label>
+        <div class="delete-row"><select id="delete-item-select" class="form-control"><option value="">Loading menu…</option></select><button id="delete-item" class="button button-danger" type="button" disabled>Delete</button></div>
+        <p id="delete-feedback" class="form-feedback" role="status" aria-live="polite"></p>
+      </section>
+    </div>
+    <p id="page-error" class="notice error" role="alert" hidden></p>
+    <p class="manage-disclaimer">This page is an academic demo and has no authentication. It is not a secured admin panel.</p>
+  </main>
+  <footer class="site-footer"><div class="section-wrap footer-inner"><a class="brand footer-brand" href="/"><img src="/assets/oliva-mark-light.svg" alt="" width="34" height="34" /><span class="brand-copy"><strong>OLIVA</strong><small>ITALIAN KITCHEN</small></span></a><span class="footer-copy">OLIVA Italian Kitchen</span><a class="admin-link" href="/">Back to Menu</a></div></footer>
+</body>
+</html>
