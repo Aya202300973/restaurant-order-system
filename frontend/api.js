@@ -130,18 +130,36 @@
   async function request(path, options) {
     const opts = options || {};
     if (DEMO_MODE) return demoRequest(path,opts);
-    const response = await fetch(API_PREFIX + path, {
+    const method = (opts.method || 'GET').toUpperCase();
+    const retryDelays = method === 'GET' ? [1000, 2000, 3000] : [];
+    const requestOptions = {
       ...opts,
       headers:{
         ...(opts.body ? {'Content-Type':'application/json'} : {}),
         ...opts.headers
       }
-    });
+    };
+    let response;
+    for (let attempt = 0; ; attempt += 1) {
+      try {
+        response = await fetch(API_PREFIX + path, requestOptions);
+        if (!([502, 503, 504].includes(response.status) && attempt < retryDelays.length)) break;
+      } catch (_) {
+        if (attempt >= retryDelays.length) {
+          throw new Error(method === 'GET'
+            ? 'The server is unavailable. Please try again.'
+            : 'Connection lost. Check whether your action succeeded before trying again.');
+        }
+      }
+      await new Promise((resolve) => setTimeout(resolve, retryDelays[attempt]));
+    }
     const raw = await response.text();
     let data = null;
     if (raw) {
       try { data = JSON.parse(raw); }
-      catch (_) { data = {detail:raw}; }
+      catch (_) {
+        data = {detail: /^\s*</.test(raw) ? 'The server is temporarily unavailable. Please try again.' : raw};
+      }
     }
     if (!response.ok) {
       const detail = data && (data.detail ?? data.message ?? data.error);
